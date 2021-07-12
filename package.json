@@ -2,9 +2,9 @@
   "name": "Videoconferencia_WebRTC",
   "version": "1.0.0",
   "description": "",
-  "main": "servidor.js",
+  "main": "main.js",
   "scripts": {
-    "start": "node servidor.js"
+    "start": "node main.js"
   },
   "keywords": [],
   "author": "Jose Eduardo Hernandez",
