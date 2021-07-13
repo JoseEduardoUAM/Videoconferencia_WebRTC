@@ -16,6 +16,9 @@ io.on('connection', (socket) => {
   connectedUsers.push(socket.id);
 
   // Emitirme los otros usuarios conectados a la matriz para iniciar una conexión con cada uno de ellos.
+  // El metodo "filter" crea un nuevo array con los elementos que cumpla la condicion implementada
+  // Ejemplo 1:    [Arreglo que contiene objetos].filter( condicion )  --->  retorna un arreglo con los elementos que cumplan la condicion
+  // Ejemplo 2:    [Arreglo que contiene objetos].filter( funcion )    --->  retorna un arreglo con los elementos que cumplan la condicion
   const otherUsers = connectedUsers.filter(socketId => socketId !== socket.id);
   socket.emit('other-users', otherUsers);
 
