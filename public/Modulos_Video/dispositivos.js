@@ -3,10 +3,10 @@ import {initConnection} from './conexionwebrtc.js';
 
 // Abrir la capara para capturar audio y video
 navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
-    // Show My Video
+    // Mostrar mi Video
     videoGrid.style.display = 'grid';
     localVideo.srcObject = stream;
-    // Start a Peer Connection to Transmit Stream
+    // Inicie una conexión de pares para transmitir la transmisión
     initConnection(stream);
 }).catch(error => console.log(error));
 

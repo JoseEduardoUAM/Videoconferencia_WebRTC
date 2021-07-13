@@ -7,40 +7,40 @@ export const initConnection = (stream) => {
   let localChannel;
   let remoteChannel;
 
-  // Start a RTCPeerConnection to each client
+  // Inicie una RTCPeerConnection para cada cliente
   socket.on('other-users', (otherUsers) => {
-    // Ignore when not exists other users connected
+    // Ignorar cuando no exista otros usuarios conectados.
     if (!otherUsers || !otherUsers.length) return;
 
     const socketId = otherUsers[0];
 
-    // Ininit peer connection
+    // Iniciar conexión entre pares
     localConnection = new RTCPeerConnection();
 
-    // Add all tracks from stream to peer connection
+    // Agregar todas las pistas de la transmisión a la conexión entre pares
     stream.getTracks().forEach(track => localConnection.addTrack(track, stream));
 
-    // Send Candidtates to establish a channel communication to send stream and data
+    // Enviar candidatos para establecer un canal de comunicación para enviar flujo y datos
     localConnection.onicecandidate = ({ candidate }) => {
       candidate && socket.emit('candidate', socketId, candidate);
     };
 
-    // Receive stream from remote client and add to remote video area
+    // Reciba la transmisión desde el cliente remoto y agregue al área de video remoto
     localConnection.ontrack = ({ streams: [ stream ] }) => {
       remoteVideo.srcObject = stream;
     };
 
-    // Start the channel to chat
+    // Inicie el canal para charlar
     localChannel = localConnection.createDataChannel('chat_channel');
 
-    // Function Called When Receive Message in Channel
+    // Llamada a función que recibe un mensaje en el canal
     localChannel.onmessage = (event) => logMessage(`Receive: ${event.data}`);
     // Function Called When Channel is Opened
     localChannel.onopen = (event) => logMessage(`Channel Changed: ${event.type}`);
     // Function Called When Channel is Closed
     localChannel.onclose = (event) => logMessage(`Channel Changed: ${event.type}`);
 
-    // Create Offer, Set Local Description and Send Offer to other users connected
+    // Crear oferta, establecer descripción local y enviar oferta a otros usuarios conectados
     localConnection
       .createOffer()
       .then(offer => localConnection.setLocalDescription(offer))
@@ -49,38 +49,38 @@ export const initConnection = (stream) => {
       });
   });
 
-  // Receive Offer From Other Client
+  // Recibir oferta de otro cliente
   socket.on('offer', (socketId, description) => {
-    // Ininit peer connection
+    // Iniciar conexión entre pares
     remoteConnection = new RTCPeerConnection();
 
     // Add all tracks from stream to peer connection
     stream.getTracks().forEach(track => remoteConnection.addTrack(track, stream));
 
-    // Send Candidtates to establish a channel communication to send stream and data
+    // Agregar todas las pistas de la transmisión a la conexión entre pares
     remoteConnection.onicecandidate = ({ candidate }) => {
       candidate && socket.emit('candidate', socketId, candidate);
     };
 
-    // Receive stream from remote client and add to remote video area
+    // Reciba la transmisión desde el cliente remoto y agregue al área de video remoto
     remoteConnection.ontrack = ({ streams: [ stream ] }) => {
       remoteVideo.srcObject = stream;
     };
 
-    // Chanel Received
+    // Chanel recibido
     remoteConnection.ondatachannel = ({ channel }) => {
       // Store Channel
       remoteChannel = channel;
 
-      // Function Called When Receive Message in Channel
+      // Llamada a funcion que recibe un mensaje en el canal
       remoteChannel.onmessage = (event) => logMessage(`Receive: ${event.data}`);
-      // Function Called When Channel is Opened
+      // Función llamada cuando se abre el canal
       remoteChannel.onopen = (event) => logMessage(`Channel Changed: ${event.type}`);
-      // Function Called When Channel is Closed
+      // Función llamada cuando el canal está cerrado
       remoteChannel.onclose = (event) => logMessage(`Channel Changed: ${event.type}`);
     }
 
-    // Set Local And Remote description and create answer
+    // Establecer descripción local y remota y crear respuesta
     remoteConnection
       .setRemoteDescription(description)
       .then(() => remoteConnection.createAnswer())
@@ -90,30 +90,30 @@ export const initConnection = (stream) => {
       });
   });
 
-  // Receive Answer to establish peer connection
+  // Recibir respuesta para establecer conexión entre pares
   socket.on('answer', (description) => {
     localConnection.setRemoteDescription(description);
   });
 
-  // Receive candidates and add to peer connection
+  // Reciba candidatos y agregue a la conexión entre pares
   socket.on('candidate', (candidate) => {
-    // GET Local or Remote Connection
+    // GET Conexión local o remota
     const conn = localConnection || remoteConnection;
     conn.addIceCandidate(new RTCIceCandidate(candidate));
   });
 
-  // Map the 'message-button' click
+  // Asigne el clic del botón de mensaje
   sendButton.addEventListener('click', () => {
-    // GET message from input
+    // GET mensaje de entrada
     const message = messageInput.value;
-    // Clean input
+    // Limpiar entrada
     messageInput.value = '';
-    // Log Message Like Sended
+    // Mensaje de registro como enviado
     logMessage(`Send: ${message}`);
 
-    // GET the channel (can be local or remote)
+    // GET el canal (puede ser local o remoto)
     const channel = localChannel || remoteChannel;
-    // Send message. The other client will receive this message in 'onmessage' function from channel
+    // Enviar mensaje. El otro cliente recibirá este mensaje en la función 'onmessage' del canal
     channel.send(message);
   });
 }
