@@ -5,7 +5,7 @@
   <title>WebRTC Example</title>
 
   <style>
-    #video-grid {
+    #contenedor-video {
       display: none;
       grid-template-columns: repeat(auto-fill, 400px);
       grid-auto-rows: 400px;
@@ -24,19 +24,19 @@
   <h1>Hello!</h1>
 
   <!-- My Video and Remote Video from connection -->
-  <div id="video-grid">
-    <video playsinline autoplay muted id="local-video"></video>
-    <video playsinline autoplay id="remote-video"></video>
+  <div id="contenedor-video">
+    <video playsinline autoplay muted id="video-local"></video>
+    <video playsinline autoplay id="video-remoto"></video>
   </div>
 
-  <!-- Input to send messages -->
+  <!-- Input to send mensajes -->
   <div>
-    <span style="font-weight: bold">Message: </span>
-    <input type="text" id="message-input" title="Message to Send!">
-    <button id="message-button">Send</button>
+    <span style="font-weight: bold">Mensaje: </span>
+    <input type="text" id="entrada-mensaje" title="Message to Send!">
+    <button id="boton-mensaje">Enviar</button>
   </div>
 
   <!-- Area to Print Images -->
-  <div class="messages"></div>
+  <div class="mensajes"></div>
 </body>
 </html>
