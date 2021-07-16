@@ -1,6 +1,6 @@
 import {entradaMensaje,botonEnviar,videoRemoto,registrarMensaje} from './identificadores.js';
 
-export const initConnection = (stream) => {
+export const iniciarConexion = (stream) => {
   const socket = io('/');
   let localConnection;
   let remoteConnection;
