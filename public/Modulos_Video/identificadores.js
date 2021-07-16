@@ -12,7 +12,7 @@ export const videoLocal = document.getElementById('video-local');
 export const videoRemoto = document.getElementById('video-remoto');
 
 export const registrarMensaje = (msg) => {
-  const newMessage = document.createElement('div');
-  newMessage.innerText = msg;
-  contenedorMensajes.appendChild(newMessage);
+  const nuevoMensaje = document.createElement('div');
+  nuevoMensaje.innerText = msg;
+  contenedorMensajes.appendChild(nuevoMensaje);
 };
