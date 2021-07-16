@@ -1,20 +1,18 @@
 //Identificadores de elementos HTML
-export const videoGrid = document.getElementById('video-grid');
+export const contenedorVideo = document.getElementById('contenedor-video');
 
-const messagesEl = document.querySelector('.messages');
+const contenedorMensajes = document.querySelector('.mensajes');
 
-export const messageInput = document.getElementById('message-input');
+export const entradaMensaje = document.getElementById('entrada-mensaje');
 
-export const sendButton = document.getElementById('message-button');
+export const botonEnviar = document.getElementById('boton-mensaje');
 
-export const localVideo = document.getElementById('local-video');
+export const videoLocal = document.getElementById('video-local');
 
-export const remoteVideo = document.getElementById('remote-video');
+export const videoRemoto = document.getElementById('video-remoto');
 
-export const logMessage = (message) => {
+export const registrarMensaje = (msg) => {
   const newMessage = document.createElement('div');
-  newMessage.innerText = message;
-  messagesEl.appendChild(newMessage);
+  newMessage.innerText = msg;
+  contenedorMensajes.appendChild(newMessage);
 };
-
-console.log("Entro al modulo identificadores");

@@ -1,4 +1,4 @@
-import {messageInput,sendButton,remoteVideo,logMessage} from './identificadores.js';
+import {entradaMensaje,botonEnviar,videoRemoto,registrarMensaje} from './identificadores.js';
 
 export const initConnection = (stream) => {
   const socket = io('/');
@@ -27,18 +27,18 @@ export const initConnection = (stream) => {
 
     // Reciba la transmisión desde el cliente remoto y agregue al área de video remoto
     localConnection.ontrack = ({ streams: [ stream ] }) => {
-      remoteVideo.srcObject = stream;
+      videoRemoto.srcObject = stream;
     };
 
     // Inicie el canal para charlar
     localChannel = localConnection.createDataChannel('chat_channel');
 
     // Llamada a función que recibe un mensaje en el canal
-    localChannel.onmessage = (event) => logMessage(`Receive: ${event.data}`);
+    localChannel.onmessage = (event) => registrarMensaje(`Receive: ${event.data}`);
     // Function Called When Channel is Opened
-    localChannel.onopen = (event) => logMessage(`Channel Changed: ${event.type}`);
+    localChannel.onopen = (event) => registrarMensaje(`Channel Changed: ${event.type}`);
     // Function Called When Channel is Closed
-    localChannel.onclose = (event) => logMessage(`Channel Changed: ${event.type}`);
+    localChannel.onclose = (event) => registrarMensaje(`Channel Changed: ${event.type}`);
 
     // Crear oferta, establecer descripción local y enviar oferta a otros usuarios conectados
     localConnection
@@ -64,7 +64,7 @@ export const initConnection = (stream) => {
 
     // Reciba la transmisión desde el cliente remoto y agregue al área de video remoto
     remoteConnection.ontrack = ({ streams: [ stream ] }) => {
-      remoteVideo.srcObject = stream;
+      videoRemoto.srcObject = stream;
     };
 
     // Chanel recibido
@@ -73,11 +73,11 @@ export const initConnection = (stream) => {
       remoteChannel = channel;
 
       // Llamada a funcion que recibe un mensaje en el canal
-      remoteChannel.onmessage = (event) => logMessage(`Receive: ${event.data}`);
+      remoteChannel.onmessage = (event) => registrarMensaje(`Receive: ${event.data}`);
       // Función llamada cuando se abre el canal
-      remoteChannel.onopen = (event) => logMessage(`Channel Changed: ${event.type}`);
+      remoteChannel.onopen = (event) => registrarMensaje(`Channel Changed: ${event.type}`);
       // Función llamada cuando el canal está cerrado
-      remoteChannel.onclose = (event) => logMessage(`Channel Changed: ${event.type}`);
+      remoteChannel.onclose = (event) => registrarMensaje(`Channel Changed: ${event.type}`);
     }
 
     // Establecer descripción local y remota y crear respuesta
@@ -103,13 +103,13 @@ export const initConnection = (stream) => {
   });
 
   // Asigne el clic del botón de mensaje
-  sendButton.addEventListener('click', () => {
+  botonEnviar.addEventListener('click', () => {
     // GET mensaje de entrada
-    const message = messageInput.value;
+    const message = entradaMensaje.value;
     // Limpiar entrada
-    messageInput.value = '';
+    entradaMensaje.value = '';
     // Mensaje de registro como enviado
-    logMessage(`Send: ${message}`);
+    registrarMensaje(`Send: ${message}`);
 
     // GET el canal (puede ser local o remoto)
     const channel = localChannel || remoteChannel;
