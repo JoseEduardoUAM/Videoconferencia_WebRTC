@@ -2,7 +2,7 @@ import {entradaMensaje,botonEnviar,videoRemoto,registrarMensaje} from './identif
 
 export const iniciarConexion = (stream) => {
   const socket = io('/');
-  let localConnection;
+  let conexionLocal;
   let remoteConnection;
   let localChannel;
   let remoteChannel;
@@ -15,23 +15,23 @@ export const iniciarConexion = (stream) => {
     const socketId = otherUsers[0];
 
     // Iniciar conexión entre pares
-    localConnection = new RTCPeerConnection();
+    conexionLocal = new RTCPeerConnection();
 
     // Agregar todas las pistas de la transmisión a la conexión entre pares
-    stream.getTracks().forEach(track => localConnection.addTrack(track, stream));
+    stream.getTracks().forEach(track => conexionLocal.addTrack(track, stream));
 
     // Enviar candidatos para establecer un canal de comunicación para enviar flujo y datos
-    localConnection.onicecandidate = ({ candidate }) => {
+    conexionLocal.onicecandidate = ({ candidate }) => {
       candidate && socket.emit('candidate', socketId, candidate);
     };
 
     // Reciba la transmisión desde el cliente remoto y agregue al área de video remoto
-    localConnection.ontrack = ({ streams: [ stream ] }) => {
+    conexionLocal.ontrack = ({ streams: [ stream ] }) => {
       videoRemoto.srcObject = stream;
     };
 
     // Inicie el canal para charlar
-    localChannel = localConnection.createDataChannel('chat_channel');
+    localChannel = conexionLocal.createDataChannel('chat_channel');
 
     // Llamada a función que recibe un mensaje en el canal
     localChannel.onmessage = (event) => registrarMensaje(`Receive: ${event.data}`);
@@ -41,11 +41,11 @@ export const iniciarConexion = (stream) => {
     localChannel.onclose = (event) => registrarMensaje(`Channel Changed: ${event.type}`);
 
     // Crear oferta, establecer descripción local y enviar oferta a otros usuarios conectados
-    localConnection
+    conexionLocal
       .createOffer()
-      .then(offer => localConnection.setLocalDescription(offer))
+      .then(offer => conexionLocal.setLocalDescription(offer))
       .then(() => {
-        socket.emit('offer', socketId, localConnection.localDescription);
+        socket.emit('offer', socketId, conexionLocal.localDescription);
       });
   });
 
@@ -92,13 +92,13 @@ export const iniciarConexion = (stream) => {
 
   // Recibir respuesta para establecer conexión entre pares
   socket.on('answer', (description) => {
-    localConnection.setRemoteDescription(description);
+    conexionLocal.setRemoteDescription(description);
   });
 
   // Reciba candidatos y agregue a la conexión entre pares
   socket.on('candidate', (candidate) => {
     // GET Conexión local o remota
-    const conn = localConnection || remoteConnection;
+    const conn = conexionLocal || remoteConnection;
     conn.addIceCandidate(new RTCIceCandidate(candidate));
   });
 
