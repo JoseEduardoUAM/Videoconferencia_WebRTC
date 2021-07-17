@@ -34,7 +34,7 @@ export const iniciarConexion = (stream) => {
     canalLocal = conexionLocal.createDataChannel('chat_channel');
 
     // Llamada a función que recibe un mensaje en el canal
-    canalLocal.onmessage = (event) => registrarMensaje(`Receive: ${event.data}`);
+    canalLocal.onmessage = (event) => registrarMensaje(`Recibido: ${event.data}`);
     // Function Called When Channel is Opened
     canalLocal.onopen = (event) => registrarMensaje(`Channel Changed: ${event.type}`);
     // Function Called When Channel is Closed
@@ -73,11 +73,11 @@ export const iniciarConexion = (stream) => {
       canalRemoto = channel;
 
       // Llamada a funcion que recibe un mensaje en el canal
-      canalRemoto.onmessage = (event) => registrarMensaje(`Receive: ${event.data}`);
+      canalRemoto.onmessage = (event) => registrarMensaje(`Recibido: ${event.data}`);
       // Función llamada cuando se abre el canal
-      canalRemoto.onopen = (event) => registrarMensaje(`Channel Changed: ${event.type}`);
+      canalRemoto.onopen = (event) => registrarMensaje(`Canal Abierto: ${event.type}`);
       // Función llamada cuando el canal está cerrado
-      canalRemoto.onclose = (event) => registrarMensaje(`Channel Changed: ${event.type}`);
+      canalRemoto.onclose = (event) => registrarMensaje(`Canal Cerrado: ${event.type}`);
     }
 
     // Establecer descripción local y remota y crear respuesta
@@ -109,7 +109,7 @@ export const iniciarConexion = (stream) => {
     // Limpiar entrada
     entradaMensaje.value = '';
     // Mensaje de registro como enviado
-    registrarMensaje(`Send: ${message}`);
+    registrarMensaje(`Enviado: ${message}`);
 
     // GET el canal (puede ser local o remoto)
     const channel = canalLocal || canalRemoto;
