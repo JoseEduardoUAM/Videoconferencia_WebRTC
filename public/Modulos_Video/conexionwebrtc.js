@@ -8,11 +8,11 @@ export const iniciarConexion = (stream) => {
   let canalRemoto;
 
   // Inicie una RTCPeerConnection para cada cliente
-  socket.on('other-users', (otherUsers) => {
+  socket.on('other-users', (otrosUsuarios) => {
     // Ignorar cuando no exista otros usuarios conectados.
-    if (!otherUsers || !otherUsers.length) return;
+    if (!otrosUsuarios || !otrosUsuarios.length) return;
 
-    const socketId = otherUsers[0];
+    const socketId = otrosUsuarios[0];
 
     // Iniciar conexión entre pares
     conexionLocal = new RTCPeerConnection();
