@@ -4,8 +4,8 @@ export const iniciarConexion = (stream) => {
   const socket = io('/');
   let conexionLocal;
   let conexionRemata;
-  let localChannel;
-  let remoteChannel;
+  let canalLocal;
+  let canalRemoto;
 
   // Inicie una RTCPeerConnection para cada cliente
   socket.on('other-users', (otherUsers) => {
@@ -31,14 +31,14 @@ export const iniciarConexion = (stream) => {
     };
 
     // Inicie el canal para charlar
-    localChannel = conexionLocal.createDataChannel('chat_channel');
+    canalLocal = conexionLocal.createDataChannel('chat_channel');
 
     // Llamada a función que recibe un mensaje en el canal
-    localChannel.onmessage = (event) => registrarMensaje(`Receive: ${event.data}`);
+    canalLocal.onmessage = (event) => registrarMensaje(`Receive: ${event.data}`);
     // Function Called When Channel is Opened
-    localChannel.onopen = (event) => registrarMensaje(`Channel Changed: ${event.type}`);
+    canalLocal.onopen = (event) => registrarMensaje(`Channel Changed: ${event.type}`);
     // Function Called When Channel is Closed
-    localChannel.onclose = (event) => registrarMensaje(`Channel Changed: ${event.type}`);
+    canalLocal.onclose = (event) => registrarMensaje(`Channel Changed: ${event.type}`);
 
     // Crear oferta, establecer descripción local y enviar oferta a otros usuarios conectados
     conexionLocal
@@ -70,14 +70,14 @@ export const iniciarConexion = (stream) => {
     // Chanel recibido
     conexionRemata.ondatachannel = ({ channel }) => {
       // Store Channel
-      remoteChannel = channel;
+      canalRemoto = channel;
 
       // Llamada a funcion que recibe un mensaje en el canal
-      remoteChannel.onmessage = (event) => registrarMensaje(`Receive: ${event.data}`);
+      canalRemoto.onmessage = (event) => registrarMensaje(`Receive: ${event.data}`);
       // Función llamada cuando se abre el canal
-      remoteChannel.onopen = (event) => registrarMensaje(`Channel Changed: ${event.type}`);
+      canalRemoto.onopen = (event) => registrarMensaje(`Channel Changed: ${event.type}`);
       // Función llamada cuando el canal está cerrado
-      remoteChannel.onclose = (event) => registrarMensaje(`Channel Changed: ${event.type}`);
+      canalRemoto.onclose = (event) => registrarMensaje(`Channel Changed: ${event.type}`);
     }
 
     // Establecer descripción local y remota y crear respuesta
@@ -112,7 +112,7 @@ export const iniciarConexion = (stream) => {
     registrarMensaje(`Send: ${message}`);
 
     // GET el canal (puede ser local o remoto)
-    const channel = localChannel || remoteChannel;
+    const channel = canalLocal || canalRemoto;
     // Enviar mensaje. El otro cliente recibirá este mensaje en la función 'onmessage' del canal
     channel.send(message);
   });
