@@ -3,7 +3,7 @@ import {entradaMensaje,botonEnviar,videoRemoto,registrarMensaje} from './identif
 export const iniciarConexion = (stream) => {
   const socket = io('/');
   let conexionLocal;
-  let remoteConnection;
+  let conexionRemata;
   let localChannel;
   let remoteChannel;
 
@@ -52,23 +52,23 @@ export const iniciarConexion = (stream) => {
   // Recibir oferta de otro cliente
   socket.on('offer', (socketId, description) => {
     // Iniciar conexión entre pares
-    remoteConnection = new RTCPeerConnection();
+    conexionRemata = new RTCPeerConnection();
 
     // Add all tracks from stream to peer connection
-    stream.getTracks().forEach(track => remoteConnection.addTrack(track, stream));
+    stream.getTracks().forEach(track => conexionRemata.addTrack(track, stream));
 
     // Agregar todas las pistas de la transmisión a la conexión entre pares
-    remoteConnection.onicecandidate = ({ candidate }) => {
+    conexionRemata.onicecandidate = ({ candidate }) => {
       candidate && socket.emit('candidate', socketId, candidate);
     };
 
     // Reciba la transmisión desde el cliente remoto y agregue al área de video remoto
-    remoteConnection.ontrack = ({ streams: [ stream ] }) => {
+    conexionRemata.ontrack = ({ streams: [ stream ] }) => {
       videoRemoto.srcObject = stream;
     };
 
     // Chanel recibido
-    remoteConnection.ondatachannel = ({ channel }) => {
+    conexionRemata.ondatachannel = ({ channel }) => {
       // Store Channel
       remoteChannel = channel;
 
@@ -81,12 +81,12 @@ export const iniciarConexion = (stream) => {
     }
 
     // Establecer descripción local y remota y crear respuesta
-    remoteConnection
+    conexionRemata
       .setRemoteDescription(description)
-      .then(() => remoteConnection.createAnswer())
-      .then(answer => remoteConnection.setLocalDescription(answer))
+      .then(() => conexionRemata.createAnswer())
+      .then(answer => conexionRemata.setLocalDescription(answer))
       .then(() => {
-        socket.emit('answer', socketId, remoteConnection.localDescription);
+        socket.emit('answer', socketId, conexionRemata.localDescription);
       });
   });
 
@@ -98,7 +98,7 @@ export const iniciarConexion = (stream) => {
   // Reciba candidatos y agregue a la conexión entre pares
   socket.on('candidate', (candidate) => {
     // GET Conexión local o remota
-    const conn = conexionLocal || remoteConnection;
+    const conn = conexionLocal || conexionRemata;
     conn.addIceCandidate(new RTCIceCandidate(candidate));
   });
 
