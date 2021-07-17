@@ -21,8 +21,8 @@ export const iniciarConexion = (stream) => {
     stream.getTracks().forEach(track => conexionLocal.addTrack(track, stream));
 
     // Enviar candidatos para establecer un canal de comunicación para enviar flujo y datos
-    conexionLocal.onicecandidate = ({ candidato }) => {
-      candidato && socket.emit('candidate', socketId, candidato);
+    conexionLocal.onicecandidate = ({ candidate }) => {
+      candidate && socket.emit('candidate', socketId, candidate);
     };
 
     // Reciba la transmisión desde el cliente remoto y agregue al área de video remoto
